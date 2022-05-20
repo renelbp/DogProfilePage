@@ -7,12 +7,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -40,29 +42,30 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun ProfilePage() {
-        Card(
-            elevation = 6.dp, modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 100.dp, bottom = 100.dp, start = 16.dp, end = 16.dp)
-        ) {
+        Card(elevation = 6.dp, modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 50.dp, bottom = 100.dp, start = 16.dp, end = 16.dp)
+            .border(width = 2.dp, color = Color.White, shape = RoundedCornerShape(30.dp))) {
             BoxWithConstraints() {
                 val constraints = if (minWidth < 600.dp) {
                     portraitConstraints(margin = 16.dp)
                 } else {
-                    // TODO
-                    portraitConstraints(margin = 16.dp)
+
+                    landscapeConstraints(margin = 16.dp)
                 }
                 ConstraintLayout(constraints) {
 
                     /**Creating the references to the composables that are gonna be used in
                      *  the constraintLayout*/
 
-                    Image(painter = painterResource(id = R.drawable.husky), "husky",
-                        modifier = Modifier
+                    Image(
+                        painter = painterResource(id = R.drawable.husky), "husky",
+                        Modifier
                             .size(100.dp)
                             .clip(CircleShape)
                             .border(width = 2.dp, color = Color.Red, shape = CircleShape)
-                            .layoutId("image"))
+                            .layoutId("image"),
+                        contentScale = ContentScale.Crop)
 
                     Text(text = "Siberian Husky", fontWeight = FontWeight.Bold,
                         modifier = Modifier.layoutId("textName"))
@@ -72,17 +75,19 @@ class MainActivity : ComponentActivity() {
                     Row(horizontalArrangement = Arrangement.SpaceEvenly,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .layoutId("rowStats")) {
+                            .padding(top = 16.dp)
+                            .layoutId("rowStats")
+                    ) {
                         ProfileStats(count = "150", title = "Followers")
                         ProfileStats(count = "100", title = "Following")
                         ProfileStats(count = "30", title = "Posts")
                     }
 
-                    Button(onClick = { /*TODO*/ }) {
-                        Text(text = "Follow User", modifier = Modifier.layoutId("btnFollow"))
+                    Button(onClick = { /*TODO*/ }, Modifier.layoutId("btnFollow")) {
+                        Text(text = "Follow User")
                     }
-                    Button(onClick = { /*TODO*/ }) {
-                        Text(text = "Direct Message", modifier = Modifier.layoutId("btnMessage"))
+                    Button(onClick = { /*TODO*/ }, Modifier.layoutId("btnMessage")) {
+                        Text(text = "Direct Message")
                     }
                 }
             }
@@ -119,13 +124,13 @@ class MainActivity : ComponentActivity() {
                 top.linkTo(nickNameText.bottom)
             }
             constrain(btnFollow) {
-                top.linkTo(rowStats.bottom)
+                top.linkTo(rowStats.bottom, margin = margin)
                 start.linkTo(parent.start)
                 end.linkTo(btnMessage.start)
                 width = Dimension.wrapContent
             }
             constrain(btnMessage) {
-                top.linkTo(rowStats.bottom)
+                top.linkTo(rowStats.bottom, margin = margin)
                 start.linkTo(btnFollow.end)
                 end.linkTo(parent.end)
                 width = Dimension.wrapContent
@@ -133,7 +138,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    /*private fun landscapeConstraints(margin: Dp): ConstraintSet {
+    private fun landscapeConstraints(margin: Dp): ConstraintSet {
         return ConstraintSet {
             val image = createRefFor("image")
             val textName = createRefFor("textName")
@@ -143,14 +148,12 @@ class MainActivity : ComponentActivity() {
             val btnMessage = createRefFor("btnMessage")
             val guideLine = createGuidelineFromTop(0.3f)
             constrain(image) {
-                top.linkTo(guideLine)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
+                top.linkTo(parent.top,margin = margin)
+                start.linkTo(parent.start,margin = margin)
             }
             constrain(textName) {
-                top.linkTo(image.bottom)
                 start.linkTo(image.start)
-                end.linkTo(image.end)
+                top.linkTo(image.bottom)
             }
             constrain(nickNameText) {
                 top.linkTo(textName.bottom)
@@ -158,23 +161,27 @@ class MainActivity : ComponentActivity() {
                 end.linkTo(textName.end)
             }
             constrain(rowStats) {
-                top.linkTo(nickNameText.bottom)
+                top.linkTo(image.top)
+                start.linkTo(image.end,margin = margin)
+                end.linkTo(parent.end)
             }
             constrain(btnFollow) {
-                top.linkTo(rowStats.bottom)
-                start.linkTo(parent.start)
+                top.linkTo(rowStats.bottom,margin =16.dp)
+                start.linkTo(rowStats.start)
                 end.linkTo(btnMessage.start)
+                bottom.linkTo(btnMessage.bottom)
                 width = Dimension.wrapContent
             }
             constrain(btnMessage) {
-                top.linkTo(rowStats.bottom)
+                top.linkTo(rowStats.bottom,margin =16.dp)
                 start.linkTo(btnFollow.end)
                 end.linkTo(parent.end)
+                bottom.linkTo(btnFollow.bottom)
                 width = Dimension.wrapContent
             }
         }
     }
-*/
+
     @Composable
     fun ProfileStats(count: String, title: String) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
